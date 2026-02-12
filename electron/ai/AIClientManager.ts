@@ -289,14 +289,16 @@ export class AIClientManager {
     return response.data.choices[0].message.content
   }
 
-  async testProvider(provider: string): Promise<boolean> {
+  async testProvider(provider: string): Promise<{ success: boolean; error?: string }> {
     try {
       const providers = this.settingsManager.get('aiProviders') as Record<AIProvider, AIProviderConfig>
       const config = providers[provider as AIProvider]
       
       if (!config || !config.apiKey) {
-        return false
+        return { success: false, error: '未設定 API Key' }
       }
+
+      console.log(`Testing ${provider}...`, { baseURL: config.baseURL, model: config.model })
 
       // 發送簡短測試訊息
       switch (provider) {
@@ -326,10 +328,14 @@ export class AIClientManager {
           break
       }
 
-      return true
-    } catch (error) {
+      console.log(`Provider ${provider} test successful`)
+      return { success: true }
+    } catch (error: any) {
       console.error(`Provider ${provider} test failed:`, error)
-      return false
+      const errorMessage = error?.response?.data?.error?.message 
+        || error?.message 
+        || '未知錯誤'
+      return { success: false, error: errorMessage }
     }
   }
 

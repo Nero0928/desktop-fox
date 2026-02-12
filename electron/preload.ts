@@ -20,7 +20,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   ai: {
     chat: (message: string) => ipcRenderer.invoke('ai:chat', message),
     getAvailableProviders: () => ipcRenderer.invoke('ai:getAvailableProviders'),
-    testProvider: (provider: string) => ipcRenderer.invoke('ai:testProvider', provider)
+    testProvider: (provider: string) => ipcRenderer.invoke('ai:testProvider', provider) as Promise<{ success: boolean; error?: string }>
   },
   
   // Quota

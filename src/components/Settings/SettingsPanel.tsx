@@ -33,7 +33,7 @@ export const SettingsPanel: React.FC = () => {
   } = useSettingsStore()
   
   const [activeTab, setActiveTab] = useState<'general' | 'ai' | 'animation'>('general')
-  const [testResults, setTestResults] = useState<Record<string, boolean | null>>({})
+  const [testResults, setTestResults] = useState<Record<string, { success: boolean; error?: string } | null>>({})
   const [showApiKeys, setShowApiKeys] = useState<Record<string, boolean>>({})
   
   useEffect(() => {
@@ -75,6 +75,20 @@ export const SettingsPanel: React.FC = () => {
     setTestResults(prev => ({ ...prev, [provider]: null }))
     const result = await testProvider(provider)
     setTestResults(prev => ({ ...prev, [provider]: result }))
+  }
+  
+  const getTestButtonContent = (provider: AIProvider) => {
+    const result = testResults[provider]
+    if (result === null) return '測試中...'
+    if (result === undefined) return '測試'
+    return result.success ? '✓' : '✗'
+  }
+  
+  const getTestButtonClass = (provider: AIProvider) => {
+    const result = testResults[provider]
+    if (result?.success) return 'success'
+    if (result && !result.success) return 'error'
+    return ''
   }
   
   const handleAnimationFormatChange = async (format: AnimationFormat) => {
@@ -193,11 +207,12 @@ export const SettingsPanel: React.FC = () => {
                       
                       {config.enabled && (
                         <button
-                          className={`test-btn ${testResults[provider] === true ? 'success' : ''} ${testResults[provider] === false ? 'error' : ''}`}
+                          className={`test-btn ${getTestButtonClass(provider)}`}
                           onClick={() => handleTestProvider(provider)}
                           disabled={isLoading || !config.apiKey}
+                          title={testResults[provider]?.error || ''}
                         >
-                          {testResults[provider] === true ? '✓' : testResults[provider] === false ? '✗' : '測試'}
+                          {getTestButtonContent(provider)}
                         </button>
                       )}
                     </div>

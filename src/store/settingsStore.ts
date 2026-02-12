@@ -11,7 +11,7 @@ interface SettingsStore {
   setAIProvider: (provider: AIProvider) => Promise<void>
   setAnimationFormat: (format: AnimationFormat) => void
   loadAvailableProviders: () => Promise<void>
-  testProvider: (provider: string) => Promise<boolean>
+  testProvider: (provider: string) => Promise<{ success: boolean; error?: string }>
 }
 
 export const useSettingsStore = create<SettingsStore>((set, get) => ({
@@ -67,7 +67,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     } catch (error) {
       console.error(`Failed to test provider ${provider}:`, error)
       set({ isLoading: false })
-      return false
+      return { success: false, error: '測試失敗' }
     }
   }
 }))
