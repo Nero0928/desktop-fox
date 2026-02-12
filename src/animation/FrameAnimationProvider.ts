@@ -5,7 +5,7 @@ export class FrameAnimationProvider implements AnimationProvider {
   readonly name = 'Frame Animation'
   readonly format = 'frames'
   
-  private config: FrameAnimationConfig = {}
+  private config: FrameAnimationConfig = { basePath: './assets/sprites' }
   private currentFrames: AnimationFrame[] = []
   private currentFrameIndex = 0
   private frameTimer = 0

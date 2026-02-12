@@ -5,16 +5,16 @@ export class SpineProvider implements AnimationProvider {
   readonly name = 'Spine'
   readonly format = 'spine'
   
-  async initialize(config: AnimationConfig): Promise<void> {
+  async initialize(_config: AnimationConfig): Promise<void> {
     // TODO: 整合 Spine Runtime
     console.log('Spine provider initialized (stub)')
   }
   
-  async loadAnimation(state: PetAnimationState): Promise<void> {
+  async loadAnimation(_state: PetAnimationState): Promise<void> {
     // TODO: 載入 Spine 動畫
   }
   
-  update(deltaTime: number): void {
+  update(_deltaTime: number): void {
     // TODO: 更新 Spine 動畫
   }
   

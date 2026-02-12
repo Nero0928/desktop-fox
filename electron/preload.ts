@@ -40,7 +40,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   }
 })
 
-// TypeScript 類型聲明
+// TypeScript 類型聲明 - 必須在全局
 declare global {
   interface Window {
     electronAPI: {
@@ -78,3 +78,5 @@ declare global {
     }
   }
 }
+
+export {}

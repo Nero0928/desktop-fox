@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { PetState, PetAnimationState } from '../types'
+import type { PetAnimationState } from '../types'
 
 interface PetStore {
   // 狀態
@@ -31,7 +31,7 @@ const MAX_STAT = 100
 const MIN_STAT = 0
 const DECAY_AMOUNT = 2
 
-export const usePetStore = create<PetStore>((set, get) => ({
+export const usePetStore = create<PetStore>((set) => ({
   // 初始狀態
   hunger: 80,
   mood: 80,

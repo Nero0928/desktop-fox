@@ -5,16 +5,16 @@ export class Live2DProvider implements AnimationProvider {
   readonly name = 'Live2D Cubism'
   readonly format = 'live2d'
   
-  async initialize(config: AnimationConfig): Promise<void> {
+  async initialize(_config: AnimationConfig): Promise<void> {
     // TODO: 整合 Live2D Cubism SDK
     console.log('Live2D provider initialized (stub)')
   }
   
-  async loadAnimation(state: PetAnimationState): Promise<void> {
+  async loadAnimation(_state: PetAnimationState): Promise<void> {
     // TODO: 載入對應動作
   }
   
-  update(deltaTime: number): void {
+  update(_deltaTime: number): void {
     // TODO: 更新 Live2D 模型
   }
   

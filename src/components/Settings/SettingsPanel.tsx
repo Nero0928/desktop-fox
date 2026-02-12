@@ -23,7 +23,6 @@ const PROVIDER_NAMES: Record<AIProvider, string> = {
 export const SettingsPanel: React.FC = () => {
   const {
     settings,
-    availableProviders,
     isLoading,
     loadSettings,
     updateSetting,
@@ -43,6 +42,7 @@ export const SettingsPanel: React.FC = () => {
   
   const handleProviderChange = async (provider: AIProvider) => {
     await setAIProvider(provider)
+    void loadAvailableProviders()
   }
   
   const handleApiKeyChange = async (provider: AIProvider, apiKey: string) => {
@@ -126,7 +126,7 @@ export const SettingsPanel: React.FC = () => {
               <label>語言</label>
               <select
                 value={settings.language || 'zh-TW'}
-                onChange={(e) => updateSetting('language', e.target.value)}
+                onChange={(e) => updateSetting('language', e.target.value as 'zh-TW' | 'zh-CN' | 'en')}
               >
                 <option value="zh-TW">繁體中文</option>
                 <option value="zh-CN">简体中文</option>

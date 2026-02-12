@@ -39,14 +39,13 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     try {
       const history = await window.electronAPI.db.getChatHistory(50)
       // 反轉順序讓最新的在最下面
-      set({ messages: history.reverse() })
+      set({ messages: history.reverse() as ChatMessage[] })
     } catch (error) {
       console.error('Failed to load chat history:', error)
     }
   },
   
   sendMessage: async (content: string) => {
-    const { messages } = get()
     
     // 檢查配額
     const quota = await window.electronAPI.quota.getStatus()

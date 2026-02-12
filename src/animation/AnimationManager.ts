@@ -29,7 +29,7 @@ export class AnimationManager {
     if (format === this.currentFormat) return
     
     this.currentProvider?.destroy()
-    this.currentProvider = this.providers.get(format)
+    this.currentProvider = this.providers.get(format) ?? null
     
     if (!this.currentProvider) {
       console.warn(`Unknown animation format: ${format}, falling back to frames`)
