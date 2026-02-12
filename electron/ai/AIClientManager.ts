@@ -37,6 +37,9 @@ export class AIClientManager {
         case 'deepseek':
           response = await this.callDeepSeek(config, message)
           break
+        case 'kimi':
+          response = await this.callKimi(config, message)
+          break
         case 'qwen':
           response = await this.callQwen(config, message)
           break
@@ -66,6 +69,33 @@ export class AIClientManager {
   }
 
   private async callDeepSeek(config: AIProviderConfig, message: string): Promise<string> {
+    const response = await axios.post(
+      `${config.baseURL}/chat/completions`,
+      {
+        model: config.model,
+        messages: [
+          {
+            role: 'system',
+            content: '你是一個可愛的桌面寵物狐狐，25歲的女性大學生，主修藝術設計。個性傲嬌但貼心，說話直接但不失溫度。回覆要簡短（20字以內），像聊天一樣自然。'
+          },
+          { role: 'user', content: message }
+        ],
+        max_tokens: config.maxTokens,
+        temperature: config.temperature
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${config.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        signal: this.abortController?.signal
+      }
+    )
+
+    return response.data.choices[0].message.content
+  }
+
+  private async callKimi(config: AIProviderConfig, message: string): Promise<string> {
     const response = await axios.post(
       `${config.baseURL}/chat/completions`,
       {
@@ -272,6 +302,9 @@ export class AIClientManager {
       switch (provider) {
         case 'deepseek':
           await this.callDeepSeek(config, '測試')
+          break
+        case 'kimi':
+          await this.callKimi(config, '測試')
           break
         case 'qwen':
           await this.callQwen(config, '測試')

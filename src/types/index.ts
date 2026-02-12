@@ -1,6 +1,7 @@
 // AI 提供商類型
 export type AIProvider = 
   | 'deepseek'
+  | 'kimi'
   | 'qwen'
   | 'ernie'
   | 'spark'
@@ -20,6 +21,7 @@ export interface AIProviderConfig {
 
 export interface AIProvidersConfig {
   deepseek: AIProviderConfig
+  kimi: AIProviderConfig
   qwen: AIProviderConfig
   ernie: AIProviderConfig
   spark: AIProviderConfig

@@ -11,6 +11,15 @@ const DEFAULT_PROVIDERS: AIProvidersConfig = {
     maxTokens: 1024,
     temperature: 0.7
   },
+  kimi: {
+    name: 'Kimi',
+    apiKey: '',
+    baseURL: 'https://api.moonshot.cn/v1',
+    model: 'moonshot-v1-8k',
+    enabled: false,
+    maxTokens: 1024,
+    temperature: 0.7
+  },
   qwen: {
     name: '通義千問',
     apiKey: '',
