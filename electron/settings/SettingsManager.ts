@@ -15,7 +15,7 @@ const DEFAULT_PROVIDERS: AIProvidersConfig = {
     name: 'Kimi Code',
     apiKey: '',
     baseURL: 'https://api.moonshot.cn/v1',
-    model: 'kimi-code',
+    model: 'k2p5',
     enabled: false,
     maxTokens: 1024,
     temperature: 0.7
