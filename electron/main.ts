@@ -163,7 +163,59 @@ async function initializeManagers() {
   aiClientManager = new AIClientManager(settingsManager)
 }
 
+function showPetContextMenu() {
+  if (!mainWindow) return
+  
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: '💬 聊天',
+      click: () => {
+        createChatWindow()
+      }
+    },
+    {
+      label: '🤚 摸摸',
+      click: () => {
+        mainWindow?.webContents.send('pet:action', 'pet')
+      }
+    },
+    {
+      label: '🍖 餵食',
+      click: () => {
+        mainWindow?.webContents.send('pet:action', 'feed')
+      }
+    },
+    { type: 'separator' },
+    {
+      label: '⚙️ 設定',
+      click: () => {
+        createSettingsWindow()
+      }
+    },
+    {
+      label: '👁️ 隱藏',
+      click: () => {
+        mainWindow?.hide()
+      }
+    },
+    { type: 'separator' },
+    {
+      label: '❌ 退出',
+      click: () => {
+        app.quit()
+      }
+    }
+  ])
+  
+  contextMenu.popup({ window: mainWindow })
+}
+
 function setupIPC() {
+  // Context Menu IPC
+  ipcMain.handle('window:showContextMenu', () => {
+    showPetContextMenu()
+  })
+  
   // Database IPC
   ipcMain.handle('db:getChatHistory', async (_, limit?: number) => {
     return dbManager?.getChatHistory(limit)

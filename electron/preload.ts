@@ -34,9 +34,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
     closeChat: () => ipcRenderer.invoke('window:closeChat'),
     drag: (x: number, y: number) => ipcRenderer.invoke('window:drag', x, y),
     openSettings: () => ipcRenderer.invoke('window:openSettings'),
+    showContextMenu: () => ipcRenderer.invoke('window:showContextMenu'),
     hide: () => ipcRenderer.invoke('window:hide'),
     show: () => ipcRenderer.invoke('window:show'),
     quit: () => ipcRenderer.invoke('window:quit')
+  },
+  
+  // Pet actions
+  onPetAction: (callback: (action: string) => void) => {
+    ipcRenderer.on('pet:action', (_, action) => callback(action))
   }
 })
 
@@ -71,10 +77,12 @@ declare global {
         closeChat: () => Promise<void>
         drag: (x: number, y: number) => Promise<void>
         openSettings: () => Promise<void>
+        showContextMenu: () => Promise<void>
         hide: () => Promise<void>
         show: () => Promise<void>
         quit: () => Promise<void>
       }
+      onPetAction: (callback: (action: string) => void) => void
     }
   }
 }
