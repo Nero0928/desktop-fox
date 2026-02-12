@@ -79,6 +79,12 @@ export const PetDisplay: React.FC = () => {
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
     
+    // 移除已有的選單（防止疊加）
+    const existingMenu = document.querySelector('.pet-context-menu')
+    if (existingMenu) {
+      existingMenu.remove()
+    }
+    
     const menu = document.createElement('div')
     menu.className = 'pet-context-menu'
     menu.innerHTML = `
@@ -91,23 +97,39 @@ export const PetDisplay: React.FC = () => {
       <div class="menu-item" data-action="quit">退出</div>
     `
     
+    // 計算選單位置（避免超出視窗）
+    const menuWidth = 120
+    const menuHeight = 200
+    let x = e.clientX
+    let y = e.clientY
+    
+    // 確保選單不會超出螢幕右邊
+    if (x + menuWidth > window.innerWidth) {
+      x = window.innerWidth - menuWidth - 10
+    }
+    // 確保選單不會超出螢幕底部
+    if (y + menuHeight > window.innerHeight) {
+      y = window.innerHeight - menuHeight - 10
+    }
+    
     menu.style.cssText = `
       position: fixed;
-      left: ${e.clientX}px;
-      top: ${e.clientY}px;
-      background: rgba(255, 255, 255, 0.95);
+      left: ${x}px;
+      top: ${y}px;
+      background: rgba(255, 255, 255, 0.98);
       border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
       padding: 6px 0;
-      min-width: 120px;
-      z-index: 10000;
+      min-width: ${menuWidth}px;
+      z-index: 2147483647;
       font-size: 14px;
+      user-select: none;
     `
     
     document.body.appendChild(menu)
     
-    const handleClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
+    const handleClick = (evt: MouseEvent) => {
+      const target = evt.target as HTMLElement
       const action = target.dataset.action
       
       switch (action) {
@@ -133,10 +155,20 @@ export const PetDisplay: React.FC = () => {
       
       menu.remove()
       document.removeEventListener('click', handleClick)
+      document.removeEventListener('contextmenu', handleContextMenuClose)
     }
     
+    // 點其他地方或再次右鍵時關閉選單
+    const handleContextMenuClose = () => {
+      menu.remove()
+      document.removeEventListener('click', handleClick)
+      document.removeEventListener('contextmenu', handleContextMenuClose)
+    }
+    
+    // 延遲綁定，避免立即觸發
     setTimeout(() => {
       document.addEventListener('click', handleClick)
+      document.addEventListener('contextmenu', handleContextMenuClose)
     }, 0)
   }, [pet, feed])
   
