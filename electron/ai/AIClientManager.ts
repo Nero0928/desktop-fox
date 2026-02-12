@@ -96,30 +96,40 @@ export class AIClientManager {
   }
 
   private async callKimi(config: AIProviderConfig, message: string): Promise<string> {
-    const response = await axios.post(
-      `${config.baseURL}/chat/completions`,
-      {
-        model: config.model,
-        messages: [
-          {
-            role: 'system',
-            content: '你是一個可愛的桌面寵物狐狐，25歲的女性大學生，主修藝術設計。個性傲嬌但貼心，說話直接但不失溫度。回覆要簡短（20字以內），像聊天一樣自然。'
-          },
-          { role: 'user', content: message }
-        ],
-        max_tokens: config.maxTokens,
-        temperature: config.temperature
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${config.apiKey}`,
-          'Content-Type': 'application/json'
+    // Kimi Code 可能使用不同的端點或認證方式
+    const url = `${config.baseURL}/chat/completions`
+    console.log(`Kimi request to: ${url}`)
+    console.log(`Kimi model: ${config.model}`)
+    
+    try {
+      const response = await axios.post(
+        url,
+        {
+          model: config.model,
+          messages: [
+            {
+              role: 'system',
+              content: '你是一個可愛的桌面寵物狐狐，25歲的女性大學生，主修藝術設計。個性傲嬌但貼心，說話直接但不失溫度。回覆要簡短（20字以內），像聊天一樣自然。'
+            },
+            { role: 'user', content: message }
+          ],
+          max_tokens: config.maxTokens,
+          temperature: config.temperature
         },
-        signal: this.abortController?.signal
-      }
-    )
+        {
+          headers: {
+            'Authorization': `Bearer ${config.apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          signal: this.abortController?.signal
+        }
+      )
 
-    return response.data.choices[0].message.content
+      return response.data.choices[0].message.content
+    } catch (error: any) {
+      console.error('Kimi API Error:', error?.response?.data)
+      throw error
+    }
   }
 
   private async callQwen(config: AIProviderConfig, message: string): Promise<string> {
