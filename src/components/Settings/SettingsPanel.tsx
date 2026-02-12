@@ -12,7 +12,7 @@ const ANIMATION_FORMATS: Array<{ id: AnimationFormat; name: string; available: b
 
 const PROVIDER_NAMES: Record<AIProvider, string> = {
   deepseek: 'DeepSeek',
-  kimi: 'Kimi',
+  kimi: 'Kimi Code',
   qwen: '通義千問',
   ernie: '文心一言',
   spark: '訊飛星火',
