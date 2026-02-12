@@ -20,7 +20,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   ai: {
     chat: (message: string) => ipcRenderer.invoke('ai:chat', message),
     getAvailableProviders: () => ipcRenderer.invoke('ai:getAvailableProviders'),
-    testProvider: (provider: string) => ipcRenderer.invoke('ai:testProvider', provider) as Promise<{ success: boolean; error?: string }>
+    testProvider: (provider: string): Promise<{ success: boolean; error?: string }> => ipcRenderer.invoke('ai:testProvider', provider)
   },
   
   // Quota
@@ -63,7 +63,7 @@ declare global {
       ai: {
         chat: (message: string) => Promise<string>
         getAvailableProviders: () => Promise<string[]>
-        testProvider: (provider: string) => Promise<boolean>
+        testProvider: (provider: string) => Promise<{ success: boolean; error?: string }>
       }
       quota: {
         getStatus: () => Promise<{

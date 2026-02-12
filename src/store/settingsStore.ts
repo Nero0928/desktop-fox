@@ -63,7 +63,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     try {
       const result = await window.electronAPI.ai.testProvider(provider)
       set({ isLoading: false })
-      return result
+      return result as { success: boolean; error?: string }
     } catch (error) {
       console.error(`Failed to test provider ${provider}:`, error)
       set({ isLoading: false })
