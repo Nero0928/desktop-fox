@@ -1,0 +1,6 @@
+export { AnimationManager } from './AnimationManager'
+export { FrameAnimationProvider } from './FrameAnimationProvider'
+export { Live2DProvider } from './Live2DProvider'
+export { SpineProvider } from './SpineProvider'
+export { RiveProvider } from './RiveProvider'
+export type { AnimationProvider, AnimationConfig, AnimationFrame } from './AnimationProvider'

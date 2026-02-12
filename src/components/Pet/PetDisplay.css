@@ -1,0 +1,70 @@
+.pet-display {
+  width: 200px;
+  height: 250px;
+  position: relative;
+  cursor: grab;
+  user-select: none;
+  background: transparent;
+}
+
+.pet-display.dragging {
+  cursor: grabbing;
+}
+
+.pet-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.pet-stats {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.pet-display:hover .pet-stats {
+  opacity: 1;
+}
+
+.stat-bar {
+  width: 60px;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.stat-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* 右鍵選單樣式 */
+.pet-context-menu {
+  animation: fadeIn 0.15s ease-out;
+}
+
+.menu-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.menu-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.menu-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 6px 0;
+}
