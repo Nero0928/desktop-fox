@@ -110,6 +110,24 @@ export class SettingsManager {
         this.set(key, value)
       }
     }
+    
+    // 確保所有 AI 提供商都存在（合併新提供商）
+    const existingProviders = this.get('aiProviders') as AIProvidersConfig | null
+    if (existingProviders) {
+      let updated = false
+      const mergedProviders = { ...existingProviders }
+      
+      for (const [key, defaultConfig] of Object.entries(DEFAULT_PROVIDERS)) {
+        if (!(key in mergedProviders)) {
+          mergedProviders[key as keyof AIProvidersConfig] = defaultConfig
+          updated = true
+        }
+      }
+      
+      if (updated) {
+        this.set('aiProviders', mergedProviders)
+      }
+    }
   }
 
   get(key: string): any {
