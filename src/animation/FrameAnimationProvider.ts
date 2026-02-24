@@ -39,7 +39,7 @@ export class FrameAnimationProvider implements AnimationProvider {
     const frames: AnimationFrame[] = []
     const basePath = this.config.basePath || './assets/sprites'
     
-    // 嘗試載入 1-30 幀
+    // 嘗試載入 1-30 幀（多幀動畫）
     for (let i = 1; i <= 30; i++) {
       try {
         const image = await this.loadImage(`${basePath}/${state}/${i}.png`)
@@ -53,7 +53,20 @@ export class FrameAnimationProvider implements AnimationProvider {
       }
     }
     
-    // 如果沒有載入任何幀，使用佔位符
+    // 如果沒有多幀動畫，嘗試載入單一精靈圖
+    if (frames.length === 0) {
+      try {
+        const image = await this.loadImage(`${basePath}/${state}.png`)
+        frames.push({
+          image,
+          duration: 1000 / this.fps
+        })
+      } catch {
+        // 單一精靈圖也不存在
+      }
+    }
+    
+    // 如果都沒有載入，使用佔位符
     if (frames.length === 0) {
       frames.push({
         image: this.createPlaceholder(state),
