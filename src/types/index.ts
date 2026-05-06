@@ -1,6 +1,7 @@
-// AI 提供商類型
+// AI 提供商類型 (27 providers)
 export type AIProvider = 
   | 'deepseek'
+  | 'minimax'
   | 'kimi'
   | 'qwen'
   | 'ernie'
@@ -8,6 +9,24 @@ export type AIProvider =
   | 'chatglm'
   | 'yi'
   | 'openrouter'
+  | 'openai'
+  | 'anthropic'
+  | 'google'
+  | 'mistral'
+  | 'groq'
+  | 'together'
+  | 'fireworks'
+  | 'deepinfra'
+  | 'cerebras'
+  | 'huggingface'
+  | 'xai'
+  | 'volcengine'
+  | 'qianfan'
+  | 'bedrock'
+  | 'stepfun'
+  | 'opencode'
+  | 'venice'
+  | 'zai'
 
 export interface AIProviderConfig {
   name: string
@@ -21,6 +40,7 @@ export interface AIProviderConfig {
 
 export interface AIProvidersConfig {
   deepseek: AIProviderConfig
+  minimax: AIProviderConfig
   kimi: AIProviderConfig
   qwen: AIProviderConfig
   ernie: AIProviderConfig
@@ -28,6 +48,24 @@ export interface AIProvidersConfig {
   chatglm: AIProviderConfig
   yi: AIProviderConfig
   openrouter: AIProviderConfig
+  openai: AIProviderConfig
+  anthropic: AIProviderConfig
+  google: AIProviderConfig
+  mistral: AIProviderConfig
+  groq: AIProviderConfig
+  together: AIProviderConfig
+  fireworks: AIProviderConfig
+  deepinfra: AIProviderConfig
+  cerebras: AIProviderConfig
+  huggingface: AIProviderConfig
+  xai: AIProviderConfig
+  volcengine: AIProviderConfig
+  qianfan: AIProviderConfig
+  bedrock: AIProviderConfig
+  stepfun: AIProviderConfig
+  opencode: AIProviderConfig
+  venice: AIProviderConfig
+  zai: AIProviderConfig
 }
 
 // 寵物狀態
