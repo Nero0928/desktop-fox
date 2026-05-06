@@ -1,6 +1,7 @@
 // AI 提供商類型
 export type AIProvider = 
   | 'deepseek'
+  | 'minimax'
   | 'kimi'
   | 'qwen'
   | 'ernie'
@@ -8,6 +9,24 @@ export type AIProvider =
   | 'chatglm'
   | 'yi'
   | 'openrouter'
+  | 'openai'
+  | 'anthropic'
+  | 'google'
+  | 'mistral'
+  | 'groq'
+  | 'together'
+  | 'fireworks'
+  | 'deepinfra'
+  | 'cerebras'
+  | 'huggingface'
+  | 'xai'
+  | 'volcengine'
+  | 'qianfan'
+  | 'bedrock'
+  | 'stepfun'
+  | 'opencode'
+  | 'venice'
+  | 'zai'
 
 export interface AIProviderConfig {
   name: string
