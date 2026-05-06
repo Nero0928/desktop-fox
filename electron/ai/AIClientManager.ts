@@ -13,7 +13,7 @@ export class AIClientManager {
   getAvailableProviders(): string[] {
     const providers = this.settingsManager.get('aiProviders') as Record<AIProvider, AIProviderConfig>
     if (!providers) return []
-    
+
     return Object.entries(providers)
       .filter(([_, config]) => config.enabled)
       .map(([key, _]) => key)
@@ -23,7 +23,7 @@ export class AIClientManager {
     const provider = this.settingsManager.get('aiProvider') as AIProvider
     const providers = this.settingsManager.get('aiProviders') as Record<AIProvider, AIProviderConfig>
     const config = providers[provider]
-    
+
     if (!config || !config.apiKey) {
       throw new Error('AI_NOT_CONFIGURED')
     }
@@ -58,6 +58,9 @@ export class AIClientManager {
         case 'openrouter':
           response = await this.callOpenRouter(config, message)
           break
+        case 'minimax':
+          response = await this.callMiniMax(config, message)
+          break
         default:
           throw new Error('UNKNOWN_PROVIDER')
       }
@@ -69,10 +72,11 @@ export class AIClientManager {
   }
 
   private async callDeepSeek(config: AIProviderConfig, message: string): Promise<string> {
+    const baseURL = config.baseURL || 'https://api.deepseek.com/v1'
     const response = await axios.post(
-      `${config.baseURL}/chat/completions`,
+      `${baseURL}/chat/completions`,
       {
-        model: config.model,
+        model: config.model || 'deepseek-chat',
         messages: [
           {
             role: 'system',
@@ -80,8 +84,8 @@ export class AIClientManager {
           },
           { role: 'user', content: message }
         ],
-        max_tokens: config.maxTokens,
-        temperature: config.temperature
+        max_tokens: config.maxTokens || 200,
+        temperature: config.temperature || 0.8
       },
       {
         headers: {
@@ -96,47 +100,39 @@ export class AIClientManager {
   }
 
   private async callKimi(config: AIProviderConfig, message: string): Promise<string> {
-    // Kimi Code 可能使用不同的端點或認證方式
-    const url = `${config.baseURL}/chat/completions`
-    console.log(`Kimi request to: ${url}`)
-    console.log(`Kimi model: ${config.model}`)
-    
-    try {
-      const response = await axios.post(
-        url,
-        {
-          model: config.model,
-          messages: [
-            {
-              role: 'system',
-              content: '你是一個可愛的桌面寵物狐狐，25歲的女性大學生，主修藝術設計。個性傲嬌但貼心，說話直接但不失溫度。回覆要簡短（20字以內），像聊天一樣自然。'
-            },
-            { role: 'user', content: message }
-          ],
-          max_tokens: config.maxTokens,
-          temperature: config.temperature
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${config.apiKey}`,
-            'Content-Type': 'application/json'
+    const baseURL = config.baseURL || 'https://api.moonshot.cn/v1'
+    const response = await axios.post(
+      `${baseURL}/chat/completions`,
+      {
+        model: config.model || 'moonshot-v1-8k',
+        messages: [
+          {
+            role: 'system',
+            content: '你是一個可愛的桌面寵物狐狐，25歲的女性大學生，主修藝術設計。個性傲嬌但貼心，說話直接但不失溫度。回覆要簡短（20字以內），像聊天一樣自然。'
           },
-          signal: this.abortController?.signal
-        }
-      )
+          { role: 'user', content: message }
+        ],
+        max_tokens: config.maxTokens || 200,
+        temperature: config.temperature || 0.8
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${config.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        signal: this.abortController?.signal
+      }
+    )
 
-      return response.data.choices[0].message.content
-    } catch (error: any) {
-      console.error('Kimi API Error:', error?.response?.data)
-      throw error
-    }
+    return response.data.choices[0].message.content
   }
 
   private async callQwen(config: AIProviderConfig, message: string): Promise<string> {
+    const baseURL = config.baseURL || 'https://dashscope.aliyuncs.com/api/v1'
     const response = await axios.post(
-      `${config.baseURL}/services/aigc/text-generation/generation`,
+      `${baseURL}/services/aigc/text-generation/generation`,
       {
-        model: config.model,
+        model: config.model || 'qwen-turbo',
         input: {
           messages: [
             {
@@ -147,8 +143,8 @@ export class AIClientManager {
           ]
         },
         parameters: {
-          max_tokens: config.maxTokens,
-          temperature: config.temperature
+          max_tokens: config.maxTokens || 200,
+          temperature: config.temperature || 0.8
         }
       },
       {
@@ -164,22 +160,22 @@ export class AIClientManager {
   }
 
   private async callErnie(config: AIProviderConfig, message: string): Promise<string> {
+    const baseURL = config.baseURL || 'https://aip.baidubce.com/rpc/2.0/ai_custom/v1'
+    // ERNIE requires access_token obtained via OAuth 2.0 with client credentials
+    const accessToken = config.apiKey
     const response = await axios.post(
-      `${config.baseURL}/${config.model}`,
+      `${baseURL}/wenxinworkshop/chat/ernie-bot-turbo?access_token=${accessToken}`,
       {
         messages: [
           {
-            role: 'system',
-            content: '你是一個可愛的桌面寵物狐狐，25歲的女性大學生，主修藝術設計。個性傲嬌但貼心，說話直接但不失溫度。回覆要簡短（20字以內），像聊天一樣自然。'
-          },
-          { role: 'user', content: message }
+            role: 'user',
+            content: message
+          }
         ],
-        max_tokens: config.maxTokens,
-        temperature: config.temperature
+        max_tokens: config.maxTokens || 200
       },
       {
         headers: {
-          'Authorization': `Bearer ${config.apiKey}`,
           'Content-Type': 'application/json'
         },
         signal: this.abortController?.signal
@@ -190,10 +186,11 @@ export class AIClientManager {
   }
 
   private async callSpark(config: AIProviderConfig, message: string): Promise<string> {
+    const baseURL = config.baseURL || 'https://spark-api-open.xf-yun.com/v1'
     const response = await axios.post(
-      `${config.baseURL}/chat/completions`,
+      `${baseURL}/chat/completions`,
       {
-        model: config.model,
+        model: config.model || 'general',
         messages: [
           {
             role: 'system',
@@ -201,8 +198,8 @@ export class AIClientManager {
           },
           { role: 'user', content: message }
         ],
-        max_tokens: config.maxTokens,
-        temperature: config.temperature
+        max_tokens: config.maxTokens || 200,
+        temperature: config.temperature || 0.8
       },
       {
         headers: {
@@ -217,10 +214,11 @@ export class AIClientManager {
   }
 
   private async callChatGLM(config: AIProviderConfig, message: string): Promise<string> {
+    const baseURL = config.baseURL || 'https://open.bigmodel.cn/api/paas/v4'
     const response = await axios.post(
-      `${config.baseURL}/chat/completions`,
+      `${baseURL}/chat/completions`,
       {
-        model: config.model,
+        model: config.model || 'glm-4-flash',
         messages: [
           {
             role: 'system',
@@ -228,8 +226,8 @@ export class AIClientManager {
           },
           { role: 'user', content: message }
         ],
-        max_tokens: config.maxTokens,
-        temperature: config.temperature
+        max_tokens: config.maxTokens || 200,
+        temperature: config.temperature || 0.8
       },
       {
         headers: {
@@ -244,10 +242,11 @@ export class AIClientManager {
   }
 
   private async callYi(config: AIProviderConfig, message: string): Promise<string> {
+    const baseURL = config.baseURL || 'https://api.lingyiwanwu.com/v1'
     const response = await axios.post(
-      `${config.baseURL}/chat/completions`,
+      `${baseURL}/chat/completions`,
       {
-        model: config.model,
+        model: config.model || 'yi-34b-chat',
         messages: [
           {
             role: 'system',
@@ -255,8 +254,8 @@ export class AIClientManager {
           },
           { role: 'user', content: message }
         ],
-        max_tokens: config.maxTokens,
-        temperature: config.temperature
+        max_tokens: config.maxTokens || 200,
+        temperature: config.temperature || 0.8
       },
       {
         headers: {
@@ -271,10 +270,11 @@ export class AIClientManager {
   }
 
   private async callOpenRouter(config: AIProviderConfig, message: string): Promise<string> {
+    const baseURL = config.baseURL || 'https://openrouter.ai/api/v1'
     const response = await axios.post(
-      `${config.baseURL}/chat/completions`,
+      `${baseURL}/chat/completions`,
       {
-        model: config.model,
+        model: config.model || 'openai/gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -282,8 +282,8 @@ export class AIClientManager {
           },
           { role: 'user', content: message }
         ],
-        max_tokens: config.maxTokens,
-        temperature: config.temperature
+        max_tokens: config.maxTokens || 200,
+        temperature: config.temperature || 0.8
       },
       {
         headers: {
@@ -299,18 +299,43 @@ export class AIClientManager {
     return response.data.choices[0].message.content
   }
 
+  private async callMiniMax(config: AIProviderConfig, message: string): Promise<string> {
+    const baseURL = config.baseURL || 'https://api.minimax.io/v1'
+    const response = await axios.post(
+      `${baseURL}/chat/completions`,
+      {
+        model: config.model || 'MiniMax-M2.7',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a cute desktop pet fox named 狐狐, a 25-year-old female university student majoring in art design. Personality: tsundere but caring, direct but warm. Replies should be short (within 20 characters), natural like chat.'
+          },
+          { role: 'user', content: message }
+        ],
+        max_tokens: config.maxTokens || 200,
+        temperature: config.temperature || 0.8
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${config.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        signal: this.abortController?.signal
+      }
+    )
+
+    return response.data.choices[0].message.content
+  }
+
   async testProvider(provider: string): Promise<{ success: boolean; error?: string }> {
     try {
       const providers = this.settingsManager.get('aiProviders') as Record<AIProvider, AIProviderConfig>
       const config = providers[provider as AIProvider]
-      
+
       if (!config || !config.apiKey) {
         return { success: false, error: '未設定 API Key' }
       }
 
-      console.log(`Testing ${provider}...`, { baseURL: config.baseURL, model: config.model })
-
-      // 發送簡短測試訊息
       switch (provider) {
         case 'deepseek':
           await this.callDeepSeek(config, '測試')
@@ -336,14 +361,16 @@ export class AIClientManager {
         case 'openrouter':
           await this.callOpenRouter(config, '測試')
           break
+        case 'minimax':
+          await this.callMiniMax(config, 'test')
+          break
       }
 
-      console.log(`Provider ${provider} test successful`)
       return { success: true }
     } catch (error: any) {
-      console.error(`Provider ${provider} test failed:`, error)
-      const errorMessage = error?.response?.data?.error?.message 
-        || error?.message 
+      const errorMessage = error?.response?.data?.error?.message
+        || error?.response?.data?.error?.code
+        || error?.message
         || '未知錯誤'
       return { success: false, error: errorMessage }
     }

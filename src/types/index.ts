@@ -8,6 +8,7 @@ export type AIProvider =
   | 'chatglm'
   | 'yi'
   | 'openrouter'
+  | 'minimax'
 
 export interface AIProviderConfig {
   name: string
@@ -28,6 +29,7 @@ export interface AIProvidersConfig {
   chatglm: AIProviderConfig
   yi: AIProviderConfig
   openrouter: AIProviderConfig
+  minimax: AIProviderConfig
 }
 
 // 寵物狀態
