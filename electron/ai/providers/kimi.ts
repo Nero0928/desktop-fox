@@ -91,7 +91,7 @@ export class KimiProvider implements AIProviderAdapter {
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.KIMI_API_KEY}`,
+          'Authorization': `Bearer ${request.apiKey || process.env.KIMI_API_KEY}`,
           'Content-Type': 'application/json'
         }
       }

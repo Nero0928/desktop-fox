@@ -24,13 +24,14 @@ export class BedrockProvider implements AIProviderAdapter {
     // Bedrock uses AWS Signature Version 4 - simplified here
     const region = process.env.AWS_REGION || 'us-east-1'
     const url = `${this.definition.baseUrl}${region}/model/${request.model}/invoke`
+    const apiKey = request.apiKey || process.env.AWS_BEDROCK_API_KEY || process.env.AWS_ACCESS_KEY_ID || ''
     const response = await axios.post(url, {
       messages: request.messages,
       max_tokens: request.max_tokens
     }, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.AWS_BEDROCK_API_KEY || process.env.AWS_ACCESS_KEY_ID}`
+        'Authorization': `Bearer ${apiKey}`
       }
     })
     return response.data.content[0].text

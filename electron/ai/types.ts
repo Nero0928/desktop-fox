@@ -103,6 +103,7 @@ export interface BedrockConfig {
 // AI Request/Response
 export interface AIRequest {
   model: string
+  apiKey?: string  // Per-request API key override (supports token plan keys)
   messages: Array<{
     role: 'system' | 'user' | 'assistant'
     content: string

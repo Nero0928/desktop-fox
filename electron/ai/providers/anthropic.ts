@@ -64,7 +64,7 @@ export class AnthropicProvider implements AIProviderAdapter {
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.ANTHROPIC_API_KEY}`,
+          'Authorization': `Bearer ${request.apiKey || process.env.ANTHROPIC_API_KEY}`,
           'Content-Type': 'application/json',
           'x-api-key': process.env.ANTHROPIC_API_KEY,
           'anthropic-version': '2023-06-01'

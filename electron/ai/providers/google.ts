@@ -62,7 +62,7 @@ export class GoogleProvider implements AIProviderAdapter {
   }
 
   async call(request: AIRequest): Promise<string> {
-    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY
+    const apiKey = request.apiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || ''
     const response = await axios.post(
       `${this.definition.baseUrl}/models/${request.model}:generateContent`,
       {

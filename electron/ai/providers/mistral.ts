@@ -85,7 +85,7 @@ export class MistralProvider implements AIProviderAdapter {
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.MISTRAL_API_KEY}`,
+          'Authorization': `Bearer ${request.apiKey || process.env.MISTRAL_API_KEY}`,
           'Content-Type': 'application/json'
         }
       }

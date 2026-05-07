@@ -68,7 +68,7 @@ export class OpenAIProvider implements AIProviderAdapter {
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Authorization': `Bearer ${request.apiKey || process.env.OPENAI_API_KEY}`,
           'Content-Type': 'application/json'
         }
       }

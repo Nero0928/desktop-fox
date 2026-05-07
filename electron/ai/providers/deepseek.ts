@@ -2,6 +2,10 @@
 import axios from 'axios'
 import type { AIProviderAdapter, ProviderDefinition, AIRequest } from '../types'
 
+function resolveApiKey(envKey?: string, fallback: string): string {
+  return envKey || fallback
+}
+
 export class DeepSeekProvider implements AIProviderAdapter {
   readonly id = 'deepseek'
   readonly definition: ProviderDefinition = {
@@ -53,6 +57,7 @@ export class DeepSeekProvider implements AIProviderAdapter {
   }
 
   async call(request: AIRequest): Promise<string> {
+    const apiKey = resolveApiKey(request.apiKey, process.env.DEEPSEEK_API_KEY || '')
     const response = await axios.post(
       `${this.definition.baseUrl}/chat/completions`,
       {
@@ -63,7 +68,7 @@ export class DeepSeekProvider implements AIProviderAdapter {
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
         }
       }
@@ -73,6 +78,8 @@ export class DeepSeekProvider implements AIProviderAdapter {
 
   async test(): Promise<boolean> {
     try {
+      const apiKey = resolveApiKey(undefined, process.env.DEEPSEEK_API_KEY || '')
+      if (!apiKey) return false
       await this.call({
         model: 'deepseek-chat',
         messages: [{ role: 'user', content: 'test' }],

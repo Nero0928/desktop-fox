@@ -3,6 +3,7 @@ import type { SettingsManager } from '../settings/SettingsManager'
 import { getProviderRegistry, type AIProviderAdapter } from './provider-registry'
 import type { AIProviderId, AIRequest } from './types'
 import { SYSTEM_PROMPT } from './types'
+import type { AIProvidersConfig } from '../../src/types'
 
 export class AIClientManager {
   private settingsManager: SettingsManager
@@ -40,11 +41,16 @@ export class AIClientManager {
       throw new Error(`UNKNOWN_PROVIDER: ${providerId}`)
     }
 
+    // Get apiKey from settings (per-provider config)
+    const aiProviders = this.settingsManager.get('aiProviders') as AIProvidersConfig | null
+    const apiKey = aiProviders?.[providerId]?.apiKey || ''
+
     this.abortController = new AbortController()
 
     try {
       const request: AIRequest = {
         model: modelId,
+        apiKey,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: message }
@@ -65,6 +71,10 @@ export class AIClientManager {
     if (!provider) {
       return { success: false, error: `UNKNOWN_PROVIDER: ${providerId}` }
     }
+
+    // Get apiKey from settings for this provider
+    const aiProviders = this.settingsManager.get('aiProviders') as AIProvidersConfig | null
+    const apiKey = aiProviders?.[providerId as AIProviderId]?.apiKey || ''
 
     try {
       const success = await provider.test()

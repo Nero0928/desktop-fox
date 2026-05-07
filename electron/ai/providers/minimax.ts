@@ -1,6 +1,13 @@
 // MiniMax Provider Adapter
+// Supports token plan keys: MINIMAX_CODE_PLAN_KEY → MINIMAX_CODING_API_KEY → MINIMAX_API_KEY
 import axios from 'axios'
 import type { AIProviderAdapter, ProviderDefinition, AIRequest } from '../types'
+
+function resolveMinimaxApiKey(envKey?: string): string {
+  if (envKey) return envKey
+  // Token plan keys have priority, then coding key, then standard API key
+  return process.env.MINIMAX_CODE_PLAN_KEY || process.env.MINIMAX_CODING_API_KEY || process.env.MINIMAX_API_KEY || ''
+}
 
 export class MiniMaxProvider implements AIProviderAdapter {
   readonly id = 'minimax'
@@ -36,6 +43,7 @@ export class MiniMaxProvider implements AIProviderAdapter {
   }
 
   async call(request: AIRequest): Promise<string> {
+    const apiKey = resolveMinimaxApiKey(request.apiKey)
     const response = await axios.post(
       `${this.definition.baseUrl}/v1/chat/completions`,
       {
@@ -46,7 +54,7 @@ export class MiniMaxProvider implements AIProviderAdapter {
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.MINIMAX_API_KEY}`,
+          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
         }
       }
@@ -56,6 +64,8 @@ export class MiniMaxProvider implements AIProviderAdapter {
 
   async test(): Promise<boolean> {
     try {
+      const apiKey = resolveMinimaxApiKey()
+      if (!apiKey) return false
       await this.call({
         model: 'MiniMax-M2.7',
         messages: [{ role: 'user', content: 'test' }],
