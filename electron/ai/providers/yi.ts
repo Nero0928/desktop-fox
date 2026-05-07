@@ -26,7 +26,7 @@ export class YiProvider implements AIProviderAdapter {
       max_tokens: request.max_tokens,
       temperature: request.temperature
     }, {
-      headers: { 'Authorization': `Bearer ${process.env.YI_API_KEY}`, 'Content-Type': 'application/json' }
+      headers: { 'Authorization': `Bearer ${request.apiKey || process.env.YI_API_KEY}`, 'Content-Type': 'application/json' }
     })
     return response.data.choices[0].message.content
   }

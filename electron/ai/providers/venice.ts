@@ -25,7 +25,7 @@ export class VeniceProvider implements AIProviderAdapter {
       messages: request.messages,
       max_tokens: request.max_tokens
     }, {
-      headers: { 'Authorization': `Bearer ${process.env.VENICE_API_KEY}`, 'Content-Type': 'application/json' }
+      headers: { 'Authorization': `Bearer ${request.apiKey || process.env.VENICE_API_KEY}`, 'Content-Type': 'application/json' }
     })
     return response.data.choices[0].message.content
   }

@@ -26,7 +26,7 @@ export class QwenProvider implements AIProviderAdapter {
       input: { messages: request.messages },
       parameters: { max_tokens: request.max_tokens, temperature: request.temperature }
     }, {
-      headers: { 'Authorization': `Bearer ${process.env.QWEN_API_KEY}`, 'Content-Type': 'application/json' }
+      headers: { 'Authorization': `Bearer ${request.apiKey || process.env.QWEN_API_KEY}`, 'Content-Type': 'application/json' }
     })
     return response.data.output.text
   }

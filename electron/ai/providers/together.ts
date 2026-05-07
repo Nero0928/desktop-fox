@@ -32,7 +32,7 @@ export class TogetherProvider implements AIProviderAdapter {
       max_tokens: request.max_tokens,
       temperature: request.temperature
     }, {
-      headers: { 'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`, 'Content-Type': 'application/json' }
+      headers: { 'Authorization': `Bearer ${request.apiKey || process.env.TOGETHER_API_KEY}`, 'Content-Type': 'application/json' }
     })
     return response.data.choices[0].message.content
   }

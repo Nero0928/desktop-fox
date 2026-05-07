@@ -128,8 +128,8 @@ function createTray() {
 
 function createSettingsWindow() {
   const settingsWindow = new BrowserWindow({
-    width: 600,
-    height: 500,
+    width: 900,
+    height: 700,
     frame: true,
     transparent: false,
     alwaysOnTop: false,

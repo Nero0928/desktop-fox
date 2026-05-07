@@ -27,7 +27,7 @@ export class ZAIProvider implements AIProviderAdapter {
       messages: request.messages,
       max_tokens: request.max_tokens
     }, {
-      headers: { 'Authorization': `Bearer ${process.env.ZAI_API_KEY}`, 'Content-Type': 'application/json' }
+      headers: { 'Authorization': `Bearer ${request.apiKey || process.env.ZAI_API_KEY}`, 'Content-Type': 'application/json' }
     })
     return response.data.choices[0].message.content
   }

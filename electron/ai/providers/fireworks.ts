@@ -26,7 +26,7 @@ export class FireworksProvider implements AIProviderAdapter {
       max_tokens: request.max_tokens,
       temperature: request.temperature
     }, {
-      headers: { 'Authorization': `Bearer ${process.env.FIREWORKS_API_KEY}`, 'Content-Type': 'application/json' }
+      headers: { 'Authorization': `Bearer ${request.apiKey || process.env.FIREWORKS_API_KEY}`, 'Content-Type': 'application/json' }
     })
     return response.data.choices[0].message.content
   }
